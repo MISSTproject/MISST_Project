@@ -12,6 +12,7 @@
 
 %DONE: There are still REF s in the document.
 %DONE: Format tables and graphs to stay in proper places.
+%DONE: Spell-check complete.
 %NOTE: A DONE comment means that content-wise, section is complete.
 
 
@@ -115,7 +116,7 @@ In this section, step 5 will be explained. Every time a fault injection occurs, 
 
 Each fault parameter is assigned a level that represents how it changes. Level 2 fault parameters update every time an injection occurs. Level 1 fault parameters update every time level 2 fault parameters are initialized. Level 0 fault parameters update every time level 1 parameters are initialized. It is \textit{crucial} that if a level is meant to change throughout a fault campaign, that its lower levels (level 2 is the lowest level) are \textit{not} constants. 
 
-A level's cycle length is the number of values in a initialize-update cycle. For example, a cycle length of 3 means that a fault parameter is initialized, updated, updated, and then the cycle is repeated again. A cycle length of two means that the fault parameter is initialized every other change. A cycle length of 1 means that the parameter does not change. A cycle length of 0 means that the parameter updates every time a fault generation is requested, like level 2. A cycle length of 0 should be used for randomly generated fault parameters.
+A level's cycle length is the number of values in an initialize-update cycle. For example, a cycle length of 3 means that a fault parameter is initialized, updated, updated, and then the cycle is repeated again. A cycle length of two means that the fault parameter is initialized every other change. A cycle length of 1 means that the parameter does not change. A cycle length of 0 means that the parameter updates every time a fault generation is requested, like level 2. A cycle length of 0 should be used for randomly generated fault parameters.
 
 %DONE
 \subsubsection{Randomly Generated Injection Time}
@@ -123,7 +124,7 @@ A level's cycle length is the number of values in a initialize-update cycle. For
 
 Extra caution should be taken when injection time is configured to be generated randomly. Since injection time can't be predicted in advance, not all faults within a set can be injected before sampling occurs. \textit{All} faults in a set must be injected \textit{before} sampling to avoid injection and sampling at the same time. The MISST system doesn't explicitly enforce each set to have the same number of injects before sampling so the MISST system should be configured with that in mind. 
 
-Its recommended that if injection time is randomly generated, sets be limited to only one fault. Configure the appropriate bounds for this injection time so that it occurs before sampling time. If multiple randomly generated injection time faults are desired, set the maximum value to the quotient of the sampling time and the number of injections per set. This should avoid any sampling or injection collisions.
+It's recommended that if injection time is randomly generated, sets be limited to only one fault. Configure the appropriate bounds for this injection time so that it occurs before sampling time. If multiple randomly generated injection time faults are desired, set the maximum value to the quotient of the sampling time and the number of injections per set. This should avoid any sampling or injection collisions.
 
 %DONE
 \subsubsection{Fault Generation Example}
@@ -161,7 +162,7 @@ Generating faults in this manner allows the user flexibility to configure which 
 \subsection{Sampling-based Shutdown}
 \label{ss samping-based shutdown}
 
-Sampling-based shutdown refers to ending a fault injection campaign based on the value of sampled data. If two locations are sampled, then the decision to shutdown is based on the first sample. If MISST is configured to sample two locations, but sampling-based shutdown occurs, the second sample data will not be sent to the user. With the sampled value and the value in register sample\_shutdown\_value, there are three ways MISST evaluates sampling-based shutdown:
+Sampling-based shutdown refers to ending a fault injection campaign based on the value of sampled data. If two locations are sampled, then the decision to shut down is based on the first sample. If MISST is configured to sample two locations, but sampling-based shutdown occurs, the second sample data will not be sent to the user. With the sampled value and the value in register sample\_shutdown\_value, there are three ways MISST evaluates sampling-based shutdown:
 \begin{itemize}
 	\item MISST shutdowns if sampled value equals sample\_shutdown\_value.
 	\item MISST shutdowns if result of bitwise AND between sampled value and sample\_shutdown\_value is zero.
@@ -358,7 +359,6 @@ When the three most significant bits are b100, the address refers to memory in t
 \section{Port Descriptions}
 \label{s fp port summ}
 
-
 \begin{table}[th]
 	\centering
 	\caption{Fault Parameters Port Descriptions}
@@ -441,7 +441,7 @@ The ALU changes fault parameters based on a fault parameter's elements. Other th
 
 The ALU contains a module called noise\_gen to generate random numbers with specified distributions. The VHDL source code for this module is originally from \cite{noise gen site}. The noise\_gen module generates random values using linear feedback shift registers. The four possible distributions generated are shown in Figure \ref{fig:noise gen distributions} for 16-bit random numbers.
 
-The noise\_gen module has two outputs, gaussian and uniform, that produce random numbers. Each of these outputs have two subtypes. To produce all four possible distributions, the ALU has two noise\_gen modules. However, at the moment they produce 16-bit numbers. Unfortunately, noise\_gen is not scalable because of the properties of linear feedback shift registers.  
+The noise\_gen module has two outputs, Gaussian and uniform, that produce random numbers. Each of these outputs have two subtypes. To produce all four possible distributions, the ALU has two noise\_gen modules. However, at the moment they produce 16-bit numbers. Unfortunately, noise\_gen is not scalable because of the properties of linear feedback shift registers.  
 
 \begin{figure}[h]
 	\centering
@@ -502,7 +502,7 @@ The Control Unit is responsible for MISST high level behavior. This includes:
 %DONE
 \section{Structure}
 \label{s cu structure}
-To carry out the aforementioned tasks, the Control Unit is implemented using three modules; the register control, the memory interconnect, and the injection campaign finite state machine (ICF). These modules and their interconnections are detailed in Figure \ref{fig:control unit design}. Note that registers are represented as rectangles labeled with the register's name. All these registers are implemented in the memory interconnect submodule. Figure \ref{fig:control unit design} also shows three cycle counter modules (labeled cyc\_cnt\#). Cycle counter modules count cycles of a signal and are further explained in section \ref{ss cyc cnt}. Cycle counter 0 counts DUT clock cycles until a fault injection occurs. Cycle counter 1 counts DUT clock cycles until a sampling event occurs. Cycle counter 2 counts the number of sets (essentially the number of sample events) until the maximum number of sets to shutdown. 
+To carry out the aforementioned tasks, the Control Unit is implemented using three modules; the register control, the memory interconnect, and the injection campaign finite state machine (ICF). These modules and their interconnections are detailed in Figure \ref{fig:control unit design}. Note that registers are represented as rectangles labeled with the register's name. All these registers are implemented in the memory interconnect submodule. Figure \ref{fig:control unit design} also shows three cycle counter modules (labeled cyc\_cnt\#). Cycle counter modules count cycles of a signal and are further explained in section \ref{ss cyc cnt}. Cycle counter 0 counts DUT clock cycles until a fault injection occurs. Cycle counter 1 counts DUT clock cycles until a sampling event occurs. Cycle counter 2 counts the number of sets (essentially the number of sample events) until the maximum number of sets to shut down. 
 
 \clearpage
 \begin{figure}[h]
@@ -517,7 +517,7 @@ To carry out the aforementioned tasks, the Control Unit is implemented using thr
 \subsection{Cycle Counter Module}
 \label{ss cyc cnt}
 
-The cycle counter module is especially designed for use in MISST. Its simply counts rising edges of the input signal on clk\_in port until the number of rising edges hits a given value. Table \ref{table: cyc cnt ports} explains the role of each port.
+The cycle counter module is especially designed for use in MISST. The cycle counter module simply counts rising edges of the input signal on clk\_in port until the number of rising edges hits a given value. Table \ref{table: cyc cnt ports} explains the role of each port.
 
 \begin{table}[h]
 	\centering
@@ -905,7 +905,7 @@ For any implementation, the Adapter module is required to have certain ports and
 \chapter{Original Implementation Details}
 \label{c original imp details}
 
-In this chapter we will primarily focus on the Adapter module implementation on the PYNQ board because the MISST system core does not change between implementations. For the original implementation, the adapter module includes the AXI slave interface, the Cortex hard processor, and a bridge from Xilinx IP library. The relevant ones are AXI AHBLite Bridge and a AXI APB Bridge. The IP library doesn't have a AXI to JTAG bridge, but it does include a JTAG to AXI Master bridge.   
+In this chapter we will primarily focus on the Adapter module implementation on the PYNQ board because the MISST system core does not change between implementations. For the original implementation, the adapter module includes the AXI slave interface, the Cortex hard processor, and a bridge from Xilinx IP library. The relevant ones are AXI AHBLite Bridge and the AXI APB Bridge. The IP library doesn't have an AXI to JTAG Bridge, but it does include a JTAG to AXI Master Bridge.   
 
 %DONE
 \section{Serial Communication}
