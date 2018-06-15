@@ -18,3 +18,5 @@ Source code has been synthesized and simulated with Xilinx Vivado 2017.4 tools.
 
 ## Project Status
 This is an on going project overseen by Prof. Joseph Callenes-Sloan, and started by Froylan Aguirre in the Spring quarter of 2018. Anyone is welcome to contribute.
+
+User Guide will be uploaded by Saturday Night.
